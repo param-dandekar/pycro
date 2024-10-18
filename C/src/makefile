@@ -1,0 +1,38 @@
+IDIR		= ../include
+CC			= gcc
+CFLAGS	= -I$(IDIR)
+CPPFLAGS = -Wall
+
+ODIR	= obj
+LDIR 	= ../lib
+
+LIBS	= -lm
+
+_DEPS	= 
+DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
+
+_OBJ	= main.o 
+OBJ	= $(patsubst %,$(ODIR)/%,$(_OBJ))
+
+OFILE	= result
+
+default: all
+
+all: $(OBJ) result
+
+.PHONY: clean debug
+
+debug: CFLAGS += -DDEBUG -g
+debug: all
+
+debug-run: debug
+	gdb $(OFILE)
+
+$(ODIR)/%.o: %.c $(DEPS)
+	$(CC) $(CPPFLAGS) -c -o $@ $< $(CFLAGS)
+
+result: $(OBJ)
+	$(CC) $(CPPFLAGS) -o $(OFILE) $(OBJ) $(CFLAGS) $(LIBS)
+
+clean:
+	rm -f $(OFILE) $(ODIR)/*.o
