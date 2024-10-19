@@ -1,17 +1,19 @@
-IDIR		= ../include
-CC			= gcc
+IDIR		= ./include
+CC			= g++
 CFLAGS	= -I$(IDIR)
 CPPFLAGS = -Wall
 
-ODIR	= obj
-LDIR 	= ../lib
+SRC_FILE = ./src
+
+ODIR	= ./obj
+LDIR 	= ./lib
 
 LIBS	= -lm
 
 _DEPS	= 
 DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ	= main.o 
+_OBJ	= main.o lexer.o token.o util.o
 OBJ	= $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 OFILE	= result
@@ -28,7 +30,7 @@ debug: all
 debug-run: debug
 	gdb $(OFILE)
 
-$(ODIR)/%.o: %.c $(DEPS)
+$(ODIR)/%.o: $(SRC_FILE)/%.cpp $(DEPS)
 	$(CC) $(CPPFLAGS) -c -o $@ $< $(CFLAGS)
 
 result: $(OBJ)

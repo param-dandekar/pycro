@@ -9,3 +9,6 @@ This version is an extremely rudimentary proof of concept implementation.
 ## Features
 
  - [ ] Evaluation of arithmetic expressions
+   - [ ] Lexing integers
+   - [ ] Lexing operators
+   - [ ] Lexing floating-point numbers
