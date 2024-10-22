@@ -1,5 +1,6 @@
 #include <string>
 
+#include "util.h"
 #include "expression.h"
 
 Expression::Expression(std::string _name, std::string _type_name) : Node(_name) {
@@ -7,5 +8,5 @@ Expression::Expression(std::string _name, std::string _type_name) : Node(_name) 
 }
 
 std::string Expression::to_str() {
-  return "{" + name + ": " + type_name + "}";
+  return color(type_name, COLOR_TYPE) + "$" + color(name, COLOR_VAR);
 }

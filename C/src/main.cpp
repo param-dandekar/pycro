@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
   Integer a(0, "a");
   Float b(0.0, "b");
   Add c(&a, &b);
-  std::cout << c.to_str() << std::endl;
+  Add d(&a, &c);
+  std::cout << d.to_str() << std::endl;
   return 0;
 }
