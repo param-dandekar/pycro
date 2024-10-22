@@ -1,12 +1,11 @@
 #include "util.h"
 
-LexerError::LexerError(const std::string& msg) : message(msg) {}
-LexerError::LexerError(const std::string& msg, const std::string& reason) : message(msg+reason) {}
+LexerError::LexerError(const char* msg) : message(msg) {}
 
 const char* LexerError::what() {
-  return message.c_str();
+  return message;
 };
 
 const char* SyntaxError::what() {
-  return message.c_str();
+  return message;
 };

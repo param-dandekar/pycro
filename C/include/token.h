@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 
 enum TokenType {
@@ -8,10 +10,10 @@ enum TokenType {
 class Token {
   private:
     TokenType type;
-    std::string name;
-    bool is_valid_token_name(const std::string name);
+    const char* name;
+    bool is_valid_token_name(const char* name);
 
   public:
-    Token(TokenType _type, const std::string& _name);
+    Token(TokenType _type, const char* _name);
 };
 
