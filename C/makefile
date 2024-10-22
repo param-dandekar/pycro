@@ -13,7 +13,7 @@ LIBS	= -lm
 _DEPS	= 
 DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ	= util.o lexer.o token.o node.o numeric.o variable.o integer.o float.o operator.o main.o 
+_OBJ	= util.o lexer.o token.o node.o numeric.o expression.o integer_t.o float_t.o operator.o add_op.o main.o 
 OBJ	= $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 OFILE	= result

@@ -4,12 +4,12 @@
 
 #include "numeric.h"
 
-typedef double py_float;
+typedef double py_float_t;
 
 class Float : public Numeric {
   private:
-    py_float value;
+    py_float_t value;
  
   public:
-    Float(py_float _value, std::string _name);
+    Float(py_float_t _value, std::string _name);
 };

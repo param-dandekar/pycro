@@ -3,4 +3,4 @@
 #include "numeric.h"
 
 Numeric::Numeric(std::string _name,
-    std::string _var_name) : Variable(_name, _var_name) {}
+    std::string _type_name) : Expression(_name, _type_name) {}

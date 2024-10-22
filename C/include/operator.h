@@ -2,14 +2,35 @@
 
 #include <string>
 
-#include "numeric.h"
+#include "node.h"
 
 class Operator : public Node {
   protected:
-    std::string op_name;
+    std::string symbol;
+
+  public:
+    Operator(std::string _name, std::string _symbol);
+};
+
+class UnaryOperator : public Operator {
+  protected:
+    Node* operand;
+
+  public:
+    UnaryOperator(std::string _name, std::string _symbol,
+        Node* _operand);
+    std::string to_str() override;
+};
+
+class BinaryOperator : public Operator {
+  protected:
     Node* l_operand;
     Node* r_operand;
 
   public:
-    Operator(std::string _name, std::string _op_name);
+    BinaryOperator(std::string _name, std::string _symbol,
+        Node* _l_operand, Node* _r_operand);
+    std::string to_str() override;
 };
+
+
