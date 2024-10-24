@@ -6,23 +6,23 @@ These are the keywords implemented in this version.
 
 These are the values a boolean variable can take.
 
-[ ] `True`
-[ ] `False`
+ - `True`
+ - `False`
 
 ## Logical operators
 
 These are keywords used for logical operations.
 
-[ ] `and`
-[ ] `or`
-[ ] `not`
+ - `and`
+ - `or`
+ - `not`
 
 ## Others
 
-[ ] `is` (checks if addresses of two objects are equal)
-[ ] `in` (checks if object is in a collection)
-[ ] `None` (object with a null value)
-[ ] `pass` (empty statement, required for syntax reasons)
+ - `is` (checks if addresses of two objects are equal)
+ - `in` (checks if object is in a collection)
+ - `None` (object with a null value)
+ - `pass` (empty statement, required for syntax reasons)
 
 # Data Types
 
