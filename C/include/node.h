@@ -7,6 +7,11 @@ class Node {
     std::string name;
 
   public:
-    Node(std::string _name);
+    Node() {}
+    Node(
+        std::string _name
+        ) :
+      name(_name) {}
+
     virtual std::string to_str();
 };

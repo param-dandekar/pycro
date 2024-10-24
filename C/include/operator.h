@@ -9,7 +9,12 @@ class Operator : public Node {
     std::string symbol;
 
   public:
-    Operator(std::string _name, std::string _symbol);
+    Operator(
+        std::string _name,
+        std::string _symbol
+        ) :
+      Node(_name),
+      symbol(_symbol) {}
 };
 
 class UnaryOperator : public Operator {
@@ -17,8 +22,14 @@ class UnaryOperator : public Operator {
     Node* operand;
 
   public:
-    UnaryOperator(std::string _name, std::string _symbol,
-        Node* _operand);
+    UnaryOperator(
+        std::string _name,
+        std::string _symbol,
+        Node* _operand
+        ) :
+      Operator(_name, _symbol),
+      operand(_operand) {}
+
     std::string to_str() override;
 };
 
@@ -28,8 +39,15 @@ class BinaryOperator : public Operator {
     Node* r_operand;
 
   public:
-    BinaryOperator(std::string _name, std::string _symbol,
-        Node* _l_operand, Node* _r_operand);
+    BinaryOperator(
+        std::string _name,
+        std::string _symbol,
+        Node* _l_operand, Node* _r_operand
+        ) :
+      Operator(_name, _symbol),
+      l_operand(_l_operand),
+      r_operand(_r_operand) {}
+
     std::string to_str() override;
 };
 

@@ -3,16 +3,14 @@
 #include "token.h"
 #include "util.h"
 
-Token::Token(TokenType _type, const char* _name) {
-  if(!is_valid_token_name(_name)) {
-    char error_msg[MAXLEN_ERROR];
-    snprintf(error_msg, MAXLEN_ERROR, "Invalid token name: %s",  _name);
-    throw LexerError(error_msg);
-  } 
-  name = _name;
-  type = _type;
+std::string Token::to_str() {
+  if(next == NULL) {
+    return data.to_str();
+  } else {
+    return data.to_str() + "->" + next->to_str();
+  }
 }
 
-bool Token::is_valid_token_name(const char* name) {
-  return true;
+void Token::add_token(Node data) {
+  next = &Token(data);
 }

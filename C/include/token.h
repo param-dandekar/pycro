@@ -2,18 +2,23 @@
 
 #include <string>
 
-enum TokenType {
-  INTEGER,
-  OPERATOR
-};
+#include "node.h"
 
 class Token {
   private:
-    TokenType type;
-    const char* name;
-    bool is_valid_token_name(const char* name);
+    Node data;
+    Token* next;
 
   public:
-    Token(TokenType _type, const char* _name);
+    Token() {
+      next = NULL;
+    }
+    Token(
+        Node _data
+        ) : 
+      data(_data) {}
+
+    std::string to_str();
+    void add_token(Node data);
 };
 

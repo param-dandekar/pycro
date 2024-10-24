@@ -6,10 +6,10 @@
 
 typedef signed long long int py_int;
 
-class Integer : public Numeric {
-  private:
-    py_int value;
- 
+class Integer : public Numeric<py_int> {
   public:
-    Integer(py_int _value, std::string _name);
+    Integer(
+        std::string _name,
+        py_int _value) :
+      Numeric(_name, "int", 0) {}
 };

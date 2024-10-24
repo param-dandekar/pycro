@@ -9,6 +9,11 @@ class Expression : public Node {
     std::string type_name;
     
   public:
-    Expression(std::string _name, std::string _type_name);
+    Expression(
+        std::string _name,
+        std::string _type_name
+        ) :
+      Node(_name),
+      type_name(_type_name) {}
     std::string to_str() override;
 };

@@ -19,6 +19,7 @@
 #define COLOR_LIT   GRN
 #define COLOR_OP    YEL
 
+std::string color(char c, std::string color);
 std::string color(std::string str, std::string color);
 
 /* This error is thrown when the lexer encounters something it cannot
