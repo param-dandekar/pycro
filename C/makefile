@@ -13,10 +13,15 @@ LIBS	= -lm
 _DEPS	= 
 DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ	= util.o lexer.o token.o node.o numeric.o expression.o integer_t.o float_t.o operator.o add_op.o main.o 
+_OBJ_PARSER	= token.o parser.o 
+_OBJ_INTR		= node.o interpreter.o
+_OBJ_TYPES	= numeric.o expression.o integer_t.o float_t.o
+_OBJ_OPTRS	= operator.o add_op.o
+
+_OBJ	= util.o $(_OBJ_PARSER) $(_OBJ_INTR) $(_OBJ_TYPES) $(_OBJ_OPTRS) main.o 
 OBJ	= $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-OFILE	= result
+OFILE	= pycro
 
 default: all
 

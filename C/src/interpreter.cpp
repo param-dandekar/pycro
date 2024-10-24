@@ -17,7 +17,7 @@ void Interpreter::run() {
 
   do {
     std::cout << ">>> ";
-  } while (p.readline());
+  } while (p.parse_line());
   std::cout << std::endl;
 
   std::cout << root.to_str() << std::endl;

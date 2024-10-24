@@ -12,5 +12,6 @@ std::string Token::to_str() {
 }
 
 void Token::add_token(Node data) {
-  next = &Token(data);
+  Token token(data);
+  next = &token;
 }

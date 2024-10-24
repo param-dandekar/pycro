@@ -2,50 +2,82 @@
 #include <string>
 
 #include "parser.h"
+
 #include "util.h"
+
+#include "token.h"
 #include "integer_t.h"
 #include "float_t.h"
 
-enum TokenType {
-  UNKNOWN = 0,
-  INT,
-  FLOAT,
-  STRING
-};
 
 bool is_digit(char c);
+bool is_alpha_(char c); // is c an alphabet or underscore?
 bool is_whitespace(char c);
 bool is_operator(char c);
 bool in(char c, std::string s);
+int ctoi(char c); // convert char to int, i.e. '0' to 0 etc.
 
-void parse_token(std::string token);
-void parse_expr(std::string token, TokenType& type);
+void read_digit(char c, ParseState state);
+void read_char(char c, ParseState state);
+
+//void parse(std::string line);
+//void parse_expr(std::string token, Token::Type_e& type);
 
 Token Parser::get_token_list() {
   return head;
 }
 
-int Parser::readline() {
+int Parser::parse_line() {
   int valid = 0;
-  std::string current_token;
+
+  state.type = Token::UNKNOWN;
 
   if(getline(std::cin, buffer)) valid = 1;
-  
-  for(int i = 0; buffer[i]; i++) {
-    if(is_whitespace(buffer[i])) {
-      parse_token(current_token);
-      current_token = "";
-      continue;
-    } else {
-      current_token += buffer[i];
+
+  if(buffer.length() > 0) {
+    std::cout << "Parsing: " + color(buffer, RED) << std::endl;
+    for(int i = 0; char c = buffer[i]; i++) {
+      if(state.type == Token::STRING) {
+        if(c == state.string_quote) {
+          std::cout << state.type << std::endl;
+        }
+      } else if(is_digit(c)) {
+        read_digit(c, state);
+      } else if(is_alpha_(c)) {
+        read_char(c, state);
+      }
     }
   }
 
-  parse_token(current_token);
-
-  std::cout << head.to_str();
-
   return valid;
+}
+
+void read_digit(char c, ParseState state) {
+  switch(state.type) {
+    case Token::UNKNOWN:
+      state.type = Token::INT;
+      break;
+
+    case Token::INT:
+    case Token::FLOAT:
+      state.num_value *= 10;
+      state.num_value += ctoi(c);
+      break;
+    default:
+      throw SyntaxError();
+  }
+}
+
+void read_char(char c, ParseState state) {
+  switch(state.type) {
+    case Token::UNKNOWN:
+      state.type = Token::OTHER;
+      state.str_value += c;
+      break;
+
+    default:
+      throw SyntaxError();
+  }
 }
 
 bool in(char c, std::string s) {
@@ -61,6 +93,10 @@ bool is_digit(char c) {
   return in(c, "0123456789");
 }
 
+bool is_alpha_(char c) {
+  return ('A'<=c && c<='Z') || ('a'<=c && c<='z') || (c=='_');
+}
+
 bool is_whitespace(char c) {
   return in(c, " \t\n");
 }
@@ -69,21 +105,22 @@ bool is_operator(char c) {
   return in(c, "+-*/");
 }
 
-void parse_token(std::string token) {
-  TokenType type = UNKNOWN;
-
-  if(token == "")
-    return;
-
-  std::cout << "Parsing: " + color(token, RED) << std::endl;
-
-  if(is_digit(token[0])) {
-    type = INT;
-    parse_expr(token, type);
-  }
+int ctoi(char c) {
+  return c-'0';
 }
 
-void parse_expr(std::string token, TokenType& type) {
+/*
+void parse(std::string line) {
+  Token::Type_e type = Token::UNKNOWN;
+
+  if(line == "")
+    return;
+
+  std::cout << "Parsing: " + color(line, RED) << std::endl;
+
+}
+
+void parse_expr(std::string token, Token::Type_e& type) {
   std::string expr = "";
 
   for(int i = 0; char c = token[i]; i++) {
@@ -91,7 +128,7 @@ void parse_expr(std::string token, TokenType& type) {
       expr += c;
       //std::cout << color(c, COLOR_LIT) << "$int"; 
     } else if(c == '.') {
-      type = FLOAT;
+      type = Token::FLOAT;
       expr += c;
       //std::cout << color(c, COLOR_LIT) << "$float"; 
     } else if(is_operator(c)) {
@@ -104,4 +141,4 @@ void parse_expr(std::string token, TokenType& type) {
   }
   std::cout << expr << std::endl;
 }
-
+*/

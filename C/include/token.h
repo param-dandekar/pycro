@@ -10,6 +10,14 @@ class Token {
     Token* next;
 
   public:
+    enum Type_e {
+      UNKNOWN = 0,
+      INT,
+      FLOAT,
+      STRING,
+      OTHER // identifier, keyword, or symbol
+    };
+
     Token() {
       next = NULL;
     }

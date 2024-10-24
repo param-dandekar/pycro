@@ -1,0 +1,10 @@
+int:
+  ("+" | "-")? <digit>+
+float:
+  ("+" | "-")? <digit>* "." <digit>+
+operator:
+  "+" | "-" | "**" | "*" | "//" | "/"
+identifier:
+  <alpha> (<alpha> | <digit>)+
+string:
+  "\"" <any>* "\""
