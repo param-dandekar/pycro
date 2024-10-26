@@ -13,10 +13,13 @@ class Expression : public Object {
   public:
     Expression() :
       var_name(""), type(NULL) {}
+    
     Expression(Type* _type) :
       var_name(""), type(_type) {}
+
     Expression(std::string _var_name, Type* _type) :
       var_name(_var_name), type(_type) {}
+
     ~Expression() {
       delete type;
     }

@@ -13,12 +13,13 @@ LIBS	= -lm
 _DEPS	= 
 DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
+_OBJ_UTIL 	= color.o util.o
 _OBJ_PARSER	= 
 _OBJ_INTR		= token.o
-_OBJ_TYPES	= object.o expression.o type.o integer_t.o
+_OBJ_TYPES	= object.o expression.o type.o integer_t.o float_t.o
 _OBJ_OPTRS	= 
 
-_OBJ	= util.o $(_OBJ_PARSER) $(_OBJ_INTR) $(_OBJ_TYPES) $(_OBJ_OPTRS) main.o 
+_OBJ	= $(_OBJ_UTIL) $(_OBJ_PARSER) $(_OBJ_INTR) $(_OBJ_TYPES) $(_OBJ_OPTRS) main.o 
 OBJ	= $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 OFILE	= pycro

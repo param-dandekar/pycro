@@ -1,9 +1,10 @@
-#include "integer_t.h"
+#include "float_t.h"
 
 #include <string>
 
 #include "util.h"
+#include "color.h"
 
-std::string Integer::to_str() {
+std::string Float::to_str() {
   return format::style(std::to_string(value), BLU, DEF, true);
 }

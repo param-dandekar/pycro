@@ -2,36 +2,14 @@
 
 #include <string>
 
-#define RST "\033[0m"
+#include "color.h"
 
-enum ColorType_e {
-  FG = '3',
-  FG_BRIGHT = '9',
-  BG = '4',
-  BG_BRIGHT = 'A'
-};
-enum Color_e {
-  BLK = '0',
-  RED,
-  GRN,
-  YEL,
-  BLU,
-  MAG,
-  CYN,
-  WHT
-};
-enum Style_e {
-  DEF = '0',
-  BLD,
-  DIM,
-  ITL,
-  UND,
-  BLI,
-  INV,
-  HID,
-  STK
-};
+namespace format {
+  std::string rst();
 
-namespace style {
-  std::string c(Color_e color);
+  std::string style(std::string str, Color_e _color);
+  std::string style(std::string str, Color_e _color, bool _bright);
+  std::string style(std::string str, Style_e _style);
+  std::string style(std::string str, Color_e _color, Style_e _style);
+  std::string style(std::string str, Color_e _color, Style_e _style, bool _bright);
 };
