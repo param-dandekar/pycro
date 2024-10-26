@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 
+#include "util.h"
 #include "integer_t.h"
 #include "expression.h"
 #include "token.h"
@@ -15,5 +16,8 @@ int main (int argc, char *argv[]) {
   head->add_token(next);
 
   std::cout << head->to_str() << std::endl;
+
+  std::cout << style::c(RED) << "test" << RST << std::endl;
+
   return 0;
 }
