@@ -2,19 +2,20 @@
 
 #include <string>
 
-#include "expression.h"
+#include "type.h"
 
 template <class T>
-class Numeric : public Expression {
-  private:
+class Number : public Type {
+  protected:
     T value;
 
   public:
-    Numeric(
+    Number(
         std::string _name,
-        std::string _type_name, 
         T _value
         ) :
-      Expression(_name, _type_name),
+      Type(_name),
       value(_value) {}
+
+    std::string to_str();
 };

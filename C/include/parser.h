@@ -1,16 +1,10 @@
 #include <string>
 
+#include "util.h"
+
+#include "parse_state.h"
 #include "node.h"
 #include "token.h"
-
-class ParseState {
-  public:
-    Token::Type_e type;
-    long int num_value;
-    int decimal_pt_pos;
-    std::string str_value = "";
-    char string_quote;
-};
 
 class Parser {
   private:
@@ -20,6 +14,10 @@ class Parser {
     ParseState state;
     
   public:
+    Parser() :
+      head(),
+      tree(),
+      state() { std::cout<< "why\n"; }
     Parser(
         Node* _tree
         ) :
@@ -27,5 +25,6 @@ class Parser {
       tree(_tree) {}
     
     int parse_line();
+    void reset_state();
     Token get_token_list();
 };

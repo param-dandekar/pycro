@@ -7,8 +7,7 @@ This must be done before further class definitions can be done.
 
 25/10/2024
 [ ] Complete the parser
-  [ ] Handle "." (decimal point, member selection).
+  [-] Handle "." (decimal point, member selection).
   [ ] Handle quotes.
   [ ] Handle operators.
-
-
+ [ ] Fix Node structure. Current structure is not good.

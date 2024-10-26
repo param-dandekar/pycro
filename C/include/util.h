@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-#define MAXLEN_ERROR 100
+#define MAXLEN_ERROR 1024
 
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
@@ -22,13 +22,31 @@
 std::string color(char c, std::string color);
 std::string color(std::string str, std::string color);
 
+enum Type_e {
+  UNKNOWN = 0,
+  INT,
+  FLOAT,
+  STRING,
+  OTHER // identifier, keyword, or symbol
+};
+
 /* This error is thrown when the lexer encounters something it cannot
  * tokenise. */
 class LexerError : public std::exception {
   private:
     const char* message;
   public:
-    LexerError(const char* msg);
+    LexerError() :
+      message("Unknown error while lexing.") {}
+    LexerError(
+        const char* msg
+        ) :
+      message(msg) {}
+    LexerError(
+        std::string msg
+        ) :
+      message(msg.c_str()) {}
+
     const char* what(); 
 };
 

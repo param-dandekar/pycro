@@ -13,9 +13,9 @@ LIBS	= -lm
 _DEPS	= 
 DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ_PARSER	= token.o parser.o 
+_OBJ_PARSER	= token.o parse_state.o parser.o 
 _OBJ_INTR		= node.o interpreter.o
-_OBJ_TYPES	= numeric.o expression.o integer_t.o float_t.o
+_OBJ_TYPES	= type.o expression.o integer_t.o float_t.o
 _OBJ_OPTRS	= operator.o add_op.o
 
 _OBJ	= util.o $(_OBJ_PARSER) $(_OBJ_INTR) $(_OBJ_TYPES) $(_OBJ_OPTRS) main.o 

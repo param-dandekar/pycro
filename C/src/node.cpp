@@ -3,6 +3,6 @@
 #include "node.h"
 
 std::string Node::to_str() {
-  return name;
+  return name + "(node)";
 }
 

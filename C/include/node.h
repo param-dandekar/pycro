@@ -8,9 +8,7 @@ class Node {
 
   public:
     Node() {}
-    Node(
-        std::string _name
-        ) :
+    Node(std::string _name) :
       name(_name) {}
 
     virtual std::string to_str();

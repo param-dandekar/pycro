@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include "util.h"
+
 #include "interpreter.h"
 #include "node.h"
 #include "parser.h"
@@ -13,12 +15,23 @@ void Interpreter::run() {
   print_info();
   
   Node root("root");
-  Parser p(&root);
+  std::cout << "Starting parser..." << std::endl;
+  Parser p;
+/*  
+  bool keep_parsing = true;
 
-  do {
+  while(keep_parsing) {
     std::cout << ">>> ";
-  } while (p.parse_line());
-  std::cout << std::endl;
+    try {
+      keep_parsing = p.parse_line();
+    }
+    catch (LexerError& e) {
+      p.reset_state();
+      std::cout << e.what() << std::endl;
+    }
+  }
 
-  std::cout << root.to_str() << std::endl;
+  std::cout << std::endl;
+*/
+//  std::cout << root.to_str() << std::endl;
 }

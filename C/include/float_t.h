@@ -2,15 +2,20 @@
 
 #include <string>
 
-#include "numeric.h"
+#include "type.h"
 
 typedef double py_float;
 
-class Float : public Numeric<py_float> {
+class Float : public Type {
+  protected:
+    py_float value;
+
   public:
-    Float(
-        std::string _name,
-        py_float _value
-        ) :
-      Numeric(_name, "float", 0.0) {}
+    Float() :
+      Type("float") {}
+    Float(py_float _value) :
+      Type("float"), 
+      value(_value) {}
+
+    std::string to_str();
 };

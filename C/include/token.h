@@ -3,30 +3,21 @@
 #include <string>
 
 #include "node.h"
+#include "expression.h"
+#include "parse_state.h"
 
 class Token {
   private:
-    Node data;
-    Token* next;
+    Expression data;
+    Token* next = NULL;
 
   public:
-    enum Type_e {
-      UNKNOWN = 0,
-      INT,
-      FLOAT,
-      STRING,
-      OTHER // identifier, keyword, or symbol
-    };
-
-    Token() {
-      next = NULL;
-    }
-    Token(
-        Node _data
-        ) : 
-      data(_data) {}
+    Token() : data() { std::cout << "Making an empty token..." << std::endl; }
+    /* A Token should almost always be created
+     * directly from a ParseState. */
+    Token(ParseState state);
 
     std::string to_str();
-    void add_token(Node data);
+    void add_token(Expression data);
 };
 

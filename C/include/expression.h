@@ -3,17 +3,21 @@
 #include <string>
 
 #include "node.h"
+#include "type.h"
 
 class Expression : public Node {
   protected:
-    std::string type_name;
-    
+    std::string var_name = "";
+    Type type;
+
   public:
+    Expression() : Node(""), type(NULL) {}
     Expression(
-        std::string _name,
-        std::string _type_name
+        std::string _var_name,
+        Type _type
         ) :
-      Node(_name),
-      type_name(_type_name) {}
+      Node(_var_name),
+      type(_type) {}
+
     std::string to_str() override;
 };

@@ -16,12 +16,25 @@ bool is_whitespace(char c);
 bool is_operator(char c);
 bool in(char c, std::string s);
 int ctoi(char c); // convert char to int, i.e. '0' to 0 etc.
+double right_shift(int d, int n); // returns the digit shifted n places
+                                  // to the right (in decimal).
 
-void read_digit(char c, ParseState state);
-void read_char(char c, ParseState state);
+/* If the next character is an integer:
+ *  - If the type of the token is unknown, it is set to INT.
+ *  - If the token is an INT or a FLOAT, its int_value is updated.
+ *  - If the token is of type OTHER, the char is appended to str_value.
+ * In all other cases, a generic LexerError is thrown. */
+void read_digit(char c, ParseState& state);
 
-//void parse(std::string line);
-//void parse_expr(std::string token, Token::Type_e& type);
+/* If the next character is alphabetic or an underscore:
+ *  - If the type of the token is unknown, it is set to OTHER.
+ *  - If the token is of type OTHER, the char is appended to str_value.
+ *  - If the token is an INT or a FLOAT, a LexerError is thrown as this
+ *  is not a valid numeric value.
+ * In all other cases, a generic LexerError is thrown. */
+void read_char(char c, ParseState& state);
+
+void read_point(int i, ParseState& state);
 
 Token Parser::get_token_list() {
   return head;
@@ -30,14 +43,14 @@ Token Parser::get_token_list() {
 int Parser::parse_line() {
   int valid = 0;
 
-  state.type = Token::UNKNOWN;
+  state.type = UNKNOWN;
 
   if(getline(std::cin, buffer)) valid = 1;
 
   if(buffer.length() > 0) {
     std::cout << "Parsing: " + color(buffer, RED) << std::endl;
     for(int i = 0; char c = buffer[i]; i++) {
-      if(state.type == Token::STRING) {
+      if(state.type == STRING) {
         if(c == state.string_quote) {
           std::cout << state.type << std::endl;
         }
@@ -45,38 +58,82 @@ int Parser::parse_line() {
         read_digit(c, state);
       } else if(is_alpha_(c)) {
         read_char(c, state);
+      } else if(c == '.') {
+        read_point(i, state);
       }
     }
+    Token token(state);
+    //std::cout << token.to_str() << std::endl;
+    state.reset();
   }
 
   return valid;
 }
 
-void read_digit(char c, ParseState state) {
+void read_digit(char c, ParseState& state) {
   switch(state.type) {
-    case Token::UNKNOWN:
-      state.type = Token::INT;
+    case UNKNOWN:
+      state.type = INT;
+
+    case INT:
+    case FLOAT:
+      if(!state.frac_pos) {
+        state.int_value *= 10;
+        state.int_value += ctoi(c);
+      } else {
+        state.frac_value += right_shift(ctoi(c), state.frac_pos);
+        state.frac_pos++;
+      }
       break;
 
-    case Token::INT:
-    case Token::FLOAT:
-      state.num_value *= 10;
-      state.num_value += ctoi(c);
-      break;
-    default:
-      throw SyntaxError();
-  }
-}
-
-void read_char(char c, ParseState state) {
-  switch(state.type) {
-    case Token::UNKNOWN:
-      state.type = Token::OTHER;
+    case OTHER:
       state.str_value += c;
       break;
 
     default:
-      throw SyntaxError();
+      throw LexerError();
+  }
+}
+
+void read_char(char c, ParseState& state) {
+  switch(state.type) {
+    case UNKNOWN:
+      state.type = OTHER;
+    case OTHER:
+      state.str_value += c;
+      break;
+
+    case INT:
+    case FLOAT:
+      char error_msg[MAXLEN_ERROR];
+      sprintf(error_msg, "Non-numeric char '%c' encountered while reading numeric literal.", c);
+      throw LexerError(error_msg);
+
+    default:
+      throw LexerError();
+  }
+}
+
+void read_point(int i, ParseState& state){
+  switch(state.type) {
+    case UNKNOWN:
+    case INT:
+      state.type = FLOAT;
+    case FLOAT:
+      if(state.frac_pos) {
+        char error_msg[MAXLEN_ERROR];
+        sprintf(error_msg, "A fractional number can only have one decimal point!");
+        throw LexerError(error_msg);
+      } else {
+        state.frac_pos = 1;
+      }
+      break;
+    case OTHER:
+      state.str_value += '.';
+      break;
+
+    default:
+      throw LexerError();
   }
 }
 
@@ -109,36 +166,14 @@ int ctoi(char c) {
   return c-'0';
 }
 
-/*
-void parse(std::string line) {
-  Token::Type_e type = Token::UNKNOWN;
-
-  if(line == "")
-    return;
-
-  std::cout << "Parsing: " + color(line, RED) << std::endl;
-
-}
-
-void parse_expr(std::string token, Token::Type_e& type) {
-  std::string expr = "";
-
-  for(int i = 0; char c = token[i]; i++) {
-    if(is_digit(c)) {
-      expr += c;
-      //std::cout << color(c, COLOR_LIT) << "$int"; 
-    } else if(c == '.') {
-      type = Token::FLOAT;
-      expr += c;
-      //std::cout << color(c, COLOR_LIT) << "$float"; 
-    } else if(is_operator(c)) {
-      expr += c;
-
-      //std::cout << color(c, COLOR_OP); 
-    } else {
-      throw SyntaxError();
-    }
+double right_shift(int d, int n) {
+  double res = d;
+  while(n--) {
+    res /= 10;
   }
-  std::cout << expr << std::endl;
+  return res;
 }
-*/
+
+void Parser::reset_state() {
+  state.reset();
+}

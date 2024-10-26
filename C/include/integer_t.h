@@ -2,14 +2,20 @@
 
 #include <string>
 
-#include "numeric.h"
+#include "type.h"
 
 typedef signed long long int py_int;
 
-class Integer : public Numeric<py_int> {
+class Integer : public Type {
+  protected:
+    py_int value;
+
   public:
-    Integer(
-        std::string _name,
-        py_int _value) :
-      Numeric(_name, "int", 0) {}
+    Integer() :
+      Type("int") {}
+    Integer(py_int _value) :
+      Type("int"), 
+      value(_value) {}
+
+    std::string to_str();
 };
