@@ -15,6 +15,7 @@ class Token {
       next(NULL), data() {}
     Token(Object* _data) :
       next(NULL), data(_data) {}
+  
     ~Token() {
       delete next;
       delete data;

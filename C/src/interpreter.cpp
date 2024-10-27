@@ -21,7 +21,8 @@ void Interpreter::run() {
       lexing = false;
       break;
     }
-    cout << format::style("Lexifying:", RED, true) << " " << buffer << endl;
+
+    lexer.lexify(buffer);
   }
 
   cout << endl;
