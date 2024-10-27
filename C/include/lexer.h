@@ -55,7 +55,6 @@ class State {
 /* The lexer lexifies a raw input string into a list of tokens. */
 class Lexer {
   private:
-    Token* head;
     State state;
 
     /* The following methods are used to handle the next character while
@@ -75,11 +74,11 @@ class Lexer {
     ReadResult_e read_symbol(char c);
     
     // WARNING: This resets the state! 
-    void add_token();
+    void add_token(Token* head);
 
   public:
-    Lexer(Token* _head) :
-      head(_head), state() {}
+    Lexer() :
+      state() {}
 
-    void lexify(std::string line);
+    void lexify(std::string line, Token* head);
 };

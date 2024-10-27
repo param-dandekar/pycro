@@ -18,7 +18,7 @@ class Interpreter {
 
   public:
     Interpreter() :
-      head(NULL), root(NULL) {}
+      head(new Token()), root(NULL) {}
     ~Interpreter() {
       delete head;
       delete root;

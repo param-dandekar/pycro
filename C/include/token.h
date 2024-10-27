@@ -17,10 +17,13 @@ class Token {
       next(NULL), data(_data) {}
   
     ~Token() {
-      delete next;
-      delete data;
+      if(next) delete next;
+      if(data) delete data;
     }
 
     std::string to_str();
-    void add_token(Token* next);
+    bool is_null();
+
+    /* Returns a pointer to the last token. */
+    Token* add_token(Token* next);
 };

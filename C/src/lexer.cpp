@@ -30,10 +30,8 @@ double right_shift(int d, int n) {
 }
 
 
-void Lexer::lexify(std::string line) {
-  cout << format::style("Lexifying:", RED, true) << " " << line << endl;
+void Lexer::lexify(std::string line, Token* head) {
   if(!line.length()) {
-    cout << "Empty line!" << endl;
     return;
   }
 
@@ -43,13 +41,13 @@ void Lexer::lexify(std::string line) {
     ReadResult_e result = ERROR;
 
     /* If the current token is a string literal, keep reading
-     * until the corresponding quote is enncountered. */
+     * until the corresponding quote is encountered. */
     if(state.type == STRING) {
       state.str_value += c;
       result = SUCCESS;
       if(c == state.str_quote) {
         state.str_quote = '\0';
-        Lexer::add_token();
+        Lexer::add_token(head);
       }
     } else {
       if(is_digit(c)) {
@@ -59,13 +57,18 @@ void Lexer::lexify(std::string line) {
       } else if(c == '.') {
         result = Lexer::read_point(i);
       } else if(c == '\'' || c == '\"') {
+        /* If the first quote has been found then the first case will 
+         * have handled the logic already. */
         state.str_quote = c;
         state.type = STRING;
         state.str_value += c;
-//        cerr << format::style("WARNING: ", RED, true) << "nested quotes will result in undefined behaviour!" << endl;
+        if(c != state.str_quote) {
+          cerr << format::style("WARNING: ", RED, true)
+            << "nested quotes will result in undefined behaviour!" << endl;
+        }
         result = SUCCESS;
       } else {
-        Lexer::add_token();
+        Lexer::add_token(head);
         result = Lexer::read_symbol(c);
       }
     }
@@ -77,20 +80,28 @@ void Lexer::lexify(std::string line) {
       break;
     }
   }
-  if(state.type == UNKNOWN) {
-    cerr << format::style("WARNING: ", RED, true) << "unknown type!" << endl;
-  } else {
-    Lexer::add_token();
-  }
+  Lexer::add_token(head);
 }
 
-void Lexer::add_token() {
+void Lexer::add_token(Token* head) {
+  if(state.type == UNKNOWN) {
+//    cerr << format::style("WARNING: ", RED, true) << "unknown type!" << endl;
+    return;
+  }
+  
+  Token* new_token;
+  Object* data;
+
+  bool set_data = false;
+
   switch(state.type) {
     case INT:
-      cout << "int: " << state.int_value << endl;
+      data = new Integer(state.int_value);
+      set_data = true;
       break;
     case FLOAT:
-      cout << "float: " << state.int_value + state.frac_value << endl;
+      data = new Float(state.int_value + state.frac_value);
+      set_data = true;
       break;
     case STRING:
       cout << "str: " << state.str_value << endl;
@@ -100,6 +111,17 @@ void Lexer::add_token() {
       break;
   }
 
+  if(set_data) {
+    new_token = new Token(data);
+
+    if(!head) {
+      head = new_token;
+    } else {
+      head->add_token(new_token);
+    }
+  } else {
+    cerr << "Invalid data!" << endl;
+  }
   state.reset();
 }
 

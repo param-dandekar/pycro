@@ -11,7 +11,7 @@ void print_info();
 void Interpreter::run() {
   print_info();
 
-  Lexer lexer(head);
+  Lexer lexer;
   bool lexing = true;
   string buffer;
 
@@ -22,11 +22,14 @@ void Interpreter::run() {
       break;
     }
 
-    lexer.lexify(buffer);
+    lexer.lexify(buffer, head);
   }
 
   cout << endl;
 
+  if(!head->is_null()) {
+    cout << "Tokens: " << head->to_str() << endl;
+  }
 
   Parser parser(head, root);
 }

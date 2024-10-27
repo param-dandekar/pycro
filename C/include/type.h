@@ -2,7 +2,9 @@
 
 #include <string>
 
-class Type {
+#include "object.h"
+
+class Type : public Object {
   protected:
     std::string name;
 
