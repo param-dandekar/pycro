@@ -7,6 +7,9 @@
 
 #include "integer_t.h"
 #include "float_t.h"
+#include "boolean_t.h"
+#include "string_t.h"
+#include "null_t.h"
 
 using namespace std;
 
@@ -28,7 +31,6 @@ double right_shift(int d, int n) {
   }
   return f;
 }
-
 
 void Lexer::lexify(std::string line, Token* head) {
   if(!line.length()) {
@@ -104,10 +106,11 @@ void Lexer::add_token(Token* head) {
       set_data = true;
       break;
     case STRING:
-      cout << "str: " << state.str_value << endl;
+      data = new String(state.str_value); 
+      set_data = true;
       break;
     default:
-      cout << "unknown: " << state.str_value << endl;
+      data = Lexer::identify_token(set_data, state.str_value);
       break;
   }
 
@@ -123,6 +126,26 @@ void Lexer::add_token(Token* head) {
     cerr << "Invalid data!" << endl;
   }
   state.reset();
+}
+
+Object* Lexer::identify_token(bool& set_data, string value) {
+  // Boolean values
+  if(value == "True") {
+    set_data = true;
+    return new Boolean(1);
+  } else if(value == "False") {
+    set_data = true;
+    return new Boolean(0);
+  }
+  // Null value
+  else if(value == "None") {
+    set_data = true;
+    return new NoneType();
+  } else {
+    set_data = false;
+    cerr << "Identifiers not implemented" << endl;
+    return NULL;
+  }
 }
 
 ReadResult_e Lexer::read_digit(char c) {

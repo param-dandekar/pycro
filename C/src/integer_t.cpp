@@ -5,5 +5,5 @@
 #include "util.h"
 
 std::string Integer::to_str() {
-  return format::style(std::to_string(value), BLU, DEF, true);
+  return format::style(std::to_string(value), BLU, true);
 }

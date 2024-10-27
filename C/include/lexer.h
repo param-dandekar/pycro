@@ -57,16 +57,17 @@ class Lexer {
   private:
     State state;
 
-    /* The following methods are used to handle the next character while
-    * lexifying, depending on the type of character and the current state
-    * of the lexer. The return value depends on the action taken:
-    *  0: the 'expected' action was taken, e.g. if the character was
-    *     a digit, the numeric value in the state was updated.
-    *  1: the default behaviour was performed, i.e. the character was
-    *     added to the string value in the state.
-    *  2: an error occurred.
-    *
-    * When an error occurs, an error message is stored in the state. */
+    /* The following methods are used to handle the next character
+     * while lexifying, depending on the type of character and the
+     * current state of the lexer. The return value depends on the
+     * action taken:
+     *  0: the 'expected' action was taken, e.g. if the character was
+     *     a digit, the numeric value in the state was updated.
+     *  1: the default behaviour was performed, i.e. the character was
+     *     added to the string value in the state.
+     *  2: an error occurred.
+     *
+     * When an error occurs, an error message is stored in the state. */
 
     ReadResult_e read_digit(char c);
     ReadResult_e read_char(char c);
@@ -75,6 +76,10 @@ class Lexer {
     
     // WARNING: This resets the state! 
     void add_token(Token* head);
+
+    /* Used to identify whether an unknown type token is a keyword or
+     * an identifier. */
+    Object* identify_token(bool& set_data, std::string value);
 
   public:
     Lexer() :

@@ -6,5 +6,5 @@
 #include "color.h"
 
 std::string Float::to_str() {
-  return format::style(std::to_string(value), BLU, DEF, true);
+  return format::style(std::to_string(value), CYN);
 }

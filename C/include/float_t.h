@@ -11,6 +11,7 @@ class Float : public Type {
     py_float value;
 
   public:
-    Float(py_float _value) : Type("float"), value(_value) {}
+    Float(py_float _value) :
+      Type("float"), value(_value) {}
     std::string to_str() override;
 };

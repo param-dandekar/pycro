@@ -11,6 +11,7 @@ class Integer : public Type {
     py_int value;
 
   public:
-    Integer(py_int _value) : Type("int"), value(_value) {}
+    Integer(py_int _value) :
+      Type("int"), value(_value) {}
     std::string to_str() override;
 };
