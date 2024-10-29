@@ -3,15 +3,17 @@
 #include <string>
 
 #include "token.h"
+#include "quotestack.h"
 
 enum Type_e {
   UNKNOWN = 0,
   INT,        // integer_t.h
   FLOAT,      // float_t.h
-  BOOL,       //
-  STRING,     //
+  BOOL,       // boolean_t.h
+  STRING,     // string_t.h
   KEYWORD,    //
-  IDENTIFIER
+  IDENTIFIER, //
+  OPERATOR    // operator.h
 };
 
 enum ReadResult_e {
@@ -34,6 +36,8 @@ class State {
     char str_quote;
 
     std::string error_msg;
+
+    QuoteStack quotes;
 
     State() :
       type(UNKNOWN),
@@ -69,8 +73,9 @@ class Lexer {
      *
      * When an error occurs, an error message is stored in the state. */
 
-    ReadResult_e read_digit(char c);
-    ReadResult_e read_char(char c);
+    ReadResult_e read_digit(char c, Token* head);
+    ReadResult_e read_char(char c, Token* head);
+    ReadResult_e read_operator(char c, Token* head);
     ReadResult_e read_point(int i);
     ReadResult_e read_symbol(char c);
     
@@ -85,5 +90,5 @@ class Lexer {
     Lexer() :
       state() {}
 
-    void lexify(std::string line, Token* head);
+    void lexify(std::string line, Token* head, bool& continue_line);
 };

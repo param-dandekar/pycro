@@ -5,5 +5,5 @@
 #include "util.h"
 
 std::string String::to_str() {
-  return format::style(value, MAG, true);
+  return format::style(value, MAG);
 }

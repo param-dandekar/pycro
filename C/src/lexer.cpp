@@ -10,6 +10,8 @@
 #include "boolean_t.h"
 #include "string_t.h"
 #include "null_t.h"
+#include "operator.h"
+#include "keyword.h"
 
 using namespace std;
 
@@ -17,10 +19,43 @@ bool is_digit(char c) {
   return ('0' <= c && c <= '9');
 }
 
-bool is_alpha_(char c) {
+/* This function also accepts _ */
+bool is_alpha(char c) {
   return ('a' <= c && c <= 'z') ||
     ('A' <= c && c <= 'Z') ||
     (c == '_');
+}
+
+bool is_quote(char c) {
+  return (c == '\'') || (c == '\"');
+}
+
+bool is_operator(char c) {
+  char ops[] = {'+', '-', '*', '-', '&', '|', '^', '~', '=', ':'};
+
+  for(char i : ops) {
+    if(c == i) return true;
+  }
+  return false;
+}
+
+bool is_kw_operator(string value) {
+  string kw_ops[] = {"in", "is", "and", "or", "not"};
+
+  for(string i : kw_ops) {
+    if(value == i) return true;
+  }
+  return false;
+}
+
+bool is_keyword(string value) {
+  string kws[] = {"if", "elif", "else", "for", "while",
+    "def", "return", "continue", "break", "pass"};
+
+  for(string i : kws) {
+    if(value == i) return true;
+  }
+  return false;
 }
 
 /* Shift the digit d by n decimal places to the right. */
@@ -32,7 +67,9 @@ double right_shift(int d, int n) {
   return f;
 }
 
-void Lexer::lexify(std::string line, Token* head) {
+void Lexer::lexify(std::string line, Token* head, bool& continue_line) {
+  continue_line = false;
+
   if(!line.length()) {
     return;
   }
@@ -44,31 +81,61 @@ void Lexer::lexify(std::string line, Token* head) {
 
     /* If the current token is a string literal, keep reading
      * until the corresponding quote is encountered. */
-    if(state.type == STRING) {
-      state.str_value += c;
-      result = SUCCESS;
-      if(c == state.str_quote) {
-        state.str_quote = '\0';
-        Lexer::add_token(head);
+    if(continue_line) {
+        state.error_msg = "Expected new-line after line continuation.";
+        result = ERROR;
+    } else if(state.type == STRING) {
+      if(c == '\\') {
+        if(continue_line) {
+          state.str_value += "\\";
+          continue_line = false;
+        } else {
+          continue_line = true;
+        }
+      } else {
+        if(!is_quote(c)) {
+          state.str_value += c;
+        } else {
+          state.str_value += c;
+          if(c == state.quotes.peek()) {
+            state.quotes.pop();
+          
+            if(state.quotes.is_empty()) {
+              Lexer::add_token(head);
+            }
+          } else {
+            state.quotes.push(c);
+          }
+        }
       }
+      result = SUCCESS;
     } else {
+      continue_line = false;
+      
       if(is_digit(c)) {
-        result = Lexer::read_digit(c);
-      } else if(is_alpha_(c)) {
-        result = Lexer::read_char(c);
+        result = Lexer::read_digit(c, head);
+      } else if(is_alpha(c)) {
+        result = Lexer::read_char(c, head);
+      } else if(is_operator(c)) {
+        result = Lexer::read_operator(c, head);
       } else if(c == '.') {
         result = Lexer::read_point(i);
-      } else if(c == '\'' || c == '\"') {
-        /* If the first quote has been found then the first case will 
-         * have handled the logic already. */
-        state.str_quote = c;
+      } else if(is_quote(c)) {
         state.type = STRING;
-        state.str_value += c;
-        if(c != state.str_quote) {
-          cerr << format::style("WARNING: ", RED, true)
-            << "nested quotes will result in undefined behaviour!" << endl;
+        if(c == state.quotes.peek()) {
+          state.quotes.pop();
+        } else {
+          state.quotes.push(c);
         }
+        state.str_value += c;
         result = SUCCESS;
+      } else if(c == '\\') {
+          continue_line = true;
+          Lexer::add_token(head);
+          result = SUCCESS;
+          if(!state.quotes.is_empty()) {
+            state.type = STRING;
+          }
       } else {
         Lexer::add_token(head);
         result = Lexer::read_symbol(c);
@@ -79,15 +146,38 @@ void Lexer::lexify(std::string line, Token* head) {
       state.str_value += c;
     } else if(result == ERROR) {
       cerr << state.error_msg << endl;
+      cerr << "Current string value of state: " << state.str_value
+        << format::style(" + ", RED, true) << c << endl;
       break;
     }
   }
+
   Lexer::add_token(head);
+  
+  
+  if(!continue_line) {
+    if(!state.quotes.is_empty()) {
+      state.error_msg = "Unterminated string literal.";
+      cerr << state.error_msg << endl;
+      state.reset();
+      state.quotes.clear();
+      return;
+    }
+    Newline* temp = new Newline();
+    Token* new_line = new Token(temp);
+    head->add_token(new_line);
+  } else {
+    continue_line = false;
+  }
+
 }
 
 void Lexer::add_token(Token* head) {
   if(state.type == UNKNOWN) {
-//    cerr << format::style("WARNING: ", RED, true) << "unknown type!" << endl;
+    if(state.str_value == "") return;
+
+    cerr << format::style("WARNING: ", RED, true) <<
+      "unknown type for " << state.str_value << "!" << endl;
     return;
   }
   
@@ -106,7 +196,15 @@ void Lexer::add_token(Token* head) {
       set_data = true;
       break;
     case STRING:
+      if(!state.quotes.is_empty()) {
+        return;
+      }
+      cerr << "adding: " << state.str_value << endl;
       data = new String(state.str_value); 
+      set_data = true;
+      break;
+    case OPERATOR:
+      data = new Operator(state.str_value, false);
       set_data = true;
       break;
     default:
@@ -141,14 +239,23 @@ Object* Lexer::identify_token(bool& set_data, string value) {
   else if(value == "None") {
     set_data = true;
     return new NoneType();
+  } else if(is_kw_operator(value)) {
+    set_data = true;
+    return new Operator(value, true);
+  } else if(is_keyword(value)) {
+    set_data = true;
+    return new Keyword(value);
   } else {
-    set_data = false;
-    cerr << "Identifiers not implemented" << endl;
-    return NULL;
+    set_data = true;
+    return new Object(value);
   }
 }
 
-ReadResult_e Lexer::read_digit(char c) {
+ReadResult_e Lexer::read_digit(char c, Token* head) {
+  if(state.type == OPERATOR) {
+    Lexer::add_token(head);
+  }
+
   switch(state.type) {
     /* If the current type is unknown and a digit is encountered, it 
      * is assumed to be an integer until a decimal point or an invalid
@@ -184,13 +291,19 @@ ReadResult_e Lexer::read_digit(char c) {
   return ERROR;
 }
 
-ReadResult_e Lexer::read_char(char c) {
+ReadResult_e Lexer::read_char(char c, Token* head) {
+  if(state.type == OPERATOR) {
+    Lexer::add_token(head);
+  }
+
   switch(state.type) {
     case INT:
     case FLOAT:
+      cerr << "val: " << state.str_value
+        << format::style(" + ", RED, true) << c << endl;
       state.error_msg = "Invalid numeric literal.";
       return ERROR;
-    
+
     /* Assume that the token is an identifier. Later, check whether
      * it is a keyword. */
     case UNKNOWN:
@@ -204,6 +317,40 @@ ReadResult_e Lexer::read_char(char c) {
   }
   
   state.error_msg = "Reached invalid state.";
+  return ERROR;
+}
+
+ReadResult_e Lexer::read_operator(char c, Token* head) {
+  switch(state.type) {
+    case OPERATOR:
+      switch(c) {
+        case '=':
+          state.str_value += c;
+          Lexer::add_token(head);
+          return SUCCESS;
+        case '*':
+        case '/':
+        case '<':
+        case '>':
+          if(c == state.str_value[0]) {
+            state.str_value += c;
+            Lexer::add_token(head);
+            return SUCCESS;
+          }
+
+        default:
+          state.error_msg = "Invalid operator.";
+          return ERROR;
+      }
+      break;
+
+    default:
+      Lexer::add_token(head);
+      state.type = OPERATOR;
+      state.str_value += c;
+      return SUCCESS;
+  }
+
   return ERROR;
 }
 
@@ -225,7 +372,6 @@ ReadResult_e Lexer::read_point(int i) {
     default:
       return DEFAULT;
   }
-
   state.error_msg = "Reached invalid state.";
   return ERROR;
 }
@@ -234,7 +380,7 @@ ReadResult_e Lexer::read_symbol(char c) {
   switch(c) {
     case ' ':
       return SUCCESS;
-
+    
     default:
       break; // Not implemented.
   }

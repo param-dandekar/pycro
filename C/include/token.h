@@ -25,5 +25,5 @@ class Token {
     bool is_null();
 
     /* Returns a pointer to the last token. */
-    Token* add_token(Token* next);
+    Token* add_token(Token* _next);
 };

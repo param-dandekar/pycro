@@ -15,9 +15,9 @@ DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ_UTIL 	= color.o util.o
 _OBJ_INTR		= lexer.o parser.o interpreter.o
-_OBJ_OBJS		= token.o object.o expression.o
+_OBJ_OBJS		= token.o object.o expression.o keyword.o quotestack.o
 _OBJ_TYPES	= type.o integer_t.o float_t.o boolean_t.o string_t.o null_t.o
-_OBJ_OPTRS	= 
+_OBJ_OPTRS	= operator.o
 
 _OBJ	= $(_OBJ_UTIL) $(_OBJ_INTR) $(_OBJ_OBJS) $(_OBJ_TYPES) $(_OBJ_OPTRS) main.o 
 OBJ	= $(patsubst %,$(ODIR)/%,$(_OBJ))

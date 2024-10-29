@@ -13,22 +13,24 @@ void Interpreter::run() {
 
   Lexer lexer;
   bool lexing = true;
+  bool continue_line = false;
   string buffer;
 
   while(lexing) {
+
     cout << ">>> ";
     if(!getline(cin, buffer)) {
       lexing = false;
       break;
     }
 
-    lexer.lexify(buffer, head);
+    lexer.lexify(buffer, head, continue_line);
   }
 
   cout << endl;
 
   if(!head->is_null()) {
-    cout << "Tokens: " << head->to_str() << endl;
+    cout << head->to_str() << endl;
   }
 
   Parser parser(head, root);

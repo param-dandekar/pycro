@@ -3,7 +3,7 @@
 #include <string>
 
 class Object {
-  private:
+  protected:
     std::string name;
 
   public:
@@ -13,5 +13,5 @@ class Object {
       name(_name) {}
     virtual ~Object() {}
 
-    virtual std::string to_str() = 0;
+    virtual std::string to_str();
 };
