@@ -95,20 +95,25 @@ void Lexer::lexify(std::string line, Token* head, bool& continue_line) {
       } else {
         if(!is_quote(c)) {
           state.str_value += c;
+          result = SUCCESS;
         } else {
-          state.str_value += c;
-          if(c == state.quotes.peek()) {
-            state.quotes.pop();
-          
-            if(state.quotes.is_empty()) {
-              Lexer::add_token(head);
-            }
+          if(state.quotes.is_full()) {
+            state.error_msg = "Too many nested quotes.";
+            result = ERROR;
           } else {
-            state.quotes.push(c);
+            result = SUCCESS;
+            state.str_value += c;
+            if(c == state.quotes.peek()) {
+              state.quotes.pop();
+              if(state.quotes.is_empty()) {
+                Lexer::add_token(head);
+              }
+            } else {
+              state.quotes.push(c);
+            }
           }
         }
       }
-      result = SUCCESS;
     } else {
       continue_line = false;
       
@@ -199,7 +204,6 @@ void Lexer::add_token(Token* head) {
       if(!state.quotes.is_empty()) {
         return;
       }
-      cerr << "adding: " << state.str_value << endl;
       data = new String(state.str_value); 
       set_data = true;
       break;

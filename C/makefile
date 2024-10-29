@@ -1,6 +1,6 @@
 IDIR		= ./include
 CC			= g++
-CFLAGS	= -I$(IDIR)
+CFLAGS	= -I$(IDIR) -Os
 CPPFLAGS = -Wall
 
 SRC_FILE = ./src

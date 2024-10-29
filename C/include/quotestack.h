@@ -2,7 +2,7 @@
 
 #include <string>
 
-#define MAX_QUOTES 100
+#define MAX_QUOTES 3
 
 class QuoteStack {
   private:
